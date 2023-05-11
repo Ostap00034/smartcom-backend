@@ -1,14 +1,12 @@
 import { IsEmail, MinLength, IsString, IsPhoneNumber } from 'class-validator'
 
-export class AuthDto {
+export class LoginDto {
 	@IsEmail()
 	email: string
-	@IsString()
-	fio: string
-	@IsString()
-	role: string
-	@IsPhoneNumber('RU')
-	phone: string
+
+	// @IsPhoneNumber('RU')
+	// phone: string
+
 	@MinLength(6, {
 		message: 'Пароль должен быть не менее 6 символов.',
 	})

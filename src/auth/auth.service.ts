@@ -10,12 +10,13 @@ import { hash, verify } from 'argon2'
 import { User } from '@prisma/client'
 import { JwtService } from '@nestjs/jwt'
 import { RefreshTokenDto } from './dto/refresh-token.dto'
+import { LoginDto } from './dto/login.dto'
 
 @Injectable()
 export class AuthService {
 	constructor(private prisma: PrismaService, private jwt: JwtService) {}
 
-	async login(dto: AuthDto) {
+	async login(dto: LoginDto) {
 		const user = await this.validateUser(dto)
 		const tokens = await this.issueTokens(user.id)
 
@@ -94,13 +95,14 @@ export class AuthService {
 		}
 	}
 
-	private async validateUser(dto: AuthDto) {
+	private async validateUser(dto: LoginDto) {
 		const user = await this.prisma.user.findUnique({
 			where: {
-				contacts: {
-					email: dto.email,
-					phone: dto.phone,
-				},
+				// contacts: {
+				// 	email: dto.email,
+				// 	phone: dto.phone,
+				// },
+				email: dto.email,
 			},
 		})
 

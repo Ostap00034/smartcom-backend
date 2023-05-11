@@ -11,11 +11,61 @@ model User {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  email     String   @unique
-  password  String
-  fio       String
-  role      String
-  phone     String   @unique
+
+  email    String @unique
+  password String
+  fio      String
+  role     String
+  phone    String @unique
+
+  archive Archive[]
+  object  Object[]
 
   @@unique(fields: [email, phone], name: "contacts")
+}
+
+enum EnumObjectStatus {
+  NORMAL
+  EMERGENCY
+  REPAIR
+}
+
+model Object {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  title       String           @unique
+  status      EnumObjectStatus @default(NORMAL)
+  geolocation String[]         @unique
+
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?  @map("user_id")
+
+  ArchiveItem ArchiveItem[]
+}
+
+model Archive {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  items ArchiveItem[]
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @map("user_id")
+}
+
+model ArchiveItem {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  archive   Archive @relation(fields: [archiveId], references: [id])
+  archiveId Int     @map("archive_id")
+
+  object   Object @relation(fields: [objectId], references: [id])
+  objectId Int    @map("object_id")
+
+  @@map("archive_item")
 }
