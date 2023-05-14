@@ -22,7 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		return this.prisma.user.findUnique({
 			where: {
 				id: +id,
-			},
+			}
 		})
 	}
 }

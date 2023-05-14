@@ -10,6 +10,8 @@ import { AuthService } from './auth.service'
 import { AuthDto } from './dto/auth.dto'
 import { RefreshTokenDto } from './dto/refresh-token.dto'
 import { LoginDto } from './dto/login.dto'
+import { Roles } from './decorators/roles.decorator'
+import { Role } from './role.enum'
 
 @Controller('auth')
 export class AuthController {
@@ -17,6 +19,7 @@ export class AuthController {
 
 	@UsePipes(new ValidationPipe())
 	@HttpCode(200)
+	@Roles(Role.MASTER, Role.ADMIN)
 	@Post('login')
 	async login(@Body() dto: LoginDto) {
 		return this.authService.login(dto)

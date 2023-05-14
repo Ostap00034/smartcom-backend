@@ -9,11 +9,14 @@ import {
 	ValidationPipe,
 	Patch,
 	Param,
+	SetMetadata,
 } from '@nestjs/common'
 import { UserService } from './user.service'
 import { Auth } from 'src/auth/decorators/auth.decorator'
 import { CurrentUser } from 'src/auth/decorators/user.decorator'
 import { UserDto } from './user.dto'
+import { Role } from 'src/auth/role.enum'
+import { Roles } from 'src/auth/decorators/roles.decorator'
 
 @Controller('users')
 export class UserController {
@@ -21,8 +24,10 @@ export class UserController {
 
 	@Get('profile')
 	@Auth()
+	@Roles(Role.ADMIN)
 	async getProfile(@CurrentUser('id') id: number) {
-		return this.userService.getById(id)
+		// return this.userService.getById(id)
+		return { message: 'BEER' }
 	}
 
 	@UsePipes(new ValidationPipe())
