@@ -24,7 +24,7 @@ export class UserController {
 
 	@Get('profile')
 	@Auth()
-	@Roles(Role.ADMIN)
+	@Roles(Role.MASTER)
 	async getProfile(@CurrentUser('id') id: number) {
 		// return this.userService.getById(id)
 		return { message: 'BEER' }

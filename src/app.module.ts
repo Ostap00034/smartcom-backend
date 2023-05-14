@@ -10,6 +10,7 @@ import { ArchiveModule } from './archive/archive.module'
 import { PaginationModule } from './pagination/pagination.module'
 import { APP_GUARD } from '@nestjs/core'
 import { RolesGuard } from './auth/roles.guard'
+import { JwtModule } from '@nestjs/jwt'
 
 @Module({
 	controllers: [AppController],
@@ -28,6 +29,10 @@ import { RolesGuard } from './auth/roles.guard'
 		ObjectModule,
 		ArchiveModule,
 		PaginationModule,
+		JwtModule.register({
+			secret: 'sldjf$23jfoilsjfoiesij0(*)',
+			signOptions: { expiresIn: '5m' },
+		}),
 	],
 })
 export class AppModule {}
