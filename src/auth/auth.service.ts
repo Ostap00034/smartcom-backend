@@ -108,6 +108,8 @@ export class AuthService {
 
 		if (!user) throw new NotFoundException('Пользователь не найден.')
 
+		console.log(user)
+
 		const isValid = await verify(user.password, dto.password)
 
 		if (!isValid) throw new UnauthorizedException('Неверный пароль.')

@@ -8,20 +8,26 @@ import { returnUserObject } from './return-user.object'
 import { Prisma } from '@prisma/client'
 import { UserDto } from './user.dto'
 import { hash } from 'argon2'
+import { ServicedObjectService } from 'src/serviced-object/serviced-object.service'
+import { ObjectService } from 'src/object/object.service'
 
 @Injectable()
 export class UserService {
-	constructor(private prisma: PrismaService) {}
+	constructor(
+		private prisma: PrismaService,
+		private servicedObjectService: ServicedObjectService,
+		private objectService: ObjectService
+	) {}
 
 	async getById(id: number, selectObject: Prisma.UserSelect = {}) {
 		const user = await this.prisma.user.findUnique({
 			where: { id },
 			select: {
 				...returnUserObject,
-				archive: {
+				servicedObjects: {
 					select: {
 						id: true,
-						items: true,
+						description: true,
 					},
 				},
 				...selectObject,
@@ -29,7 +35,7 @@ export class UserService {
 		})
 
 		if (!user) {
-			throw new Error('Пользователь не найден')
+			throw new NotFoundException('Пользователь не найден')
 		}
 
 		return user
@@ -59,27 +65,39 @@ export class UserService {
 		})
 	}
 
-	async toggleArchive(userId: number, objectId: number) {
+	async toggleArchive(description: string, userId: number, objectId: number) {
 		const user = await this.getById(userId)
 
-		if (!user) {
-			throw new NotFoundException('Пользователь не найден')
-		}
+		const object = await this.objectService.getById(objectId)
 
-		const isExists = user.archive.some(object => object.id === objectId)
+		// return this.servicedObjectService.create({
+		// 	description,
+		// 	userId,
+		// 	objectId,
+		// })
 
-		await this.prisma.user.update({
-			where: {
-				id: user.id,
-			},
-			data: {
-				archive: {
-					[isExists ? 'disconnect' : 'connect']: {
-						id: objectId,
-					},
-				},
-			},
-		})
+		// if (!user) {
+		// 	throw new NotFoundException('Пользователь не найден')
+		// }
+
+		// console.log(user)
+
+		// const isExists = user.servicedObjects.some(
+		// 	ServiceOjbect => ServiceOjbect.id === objectId
+		// )
+
+		// await this.prisma.user.update({
+		// 	where: {
+		// 		id: user.id,
+		// 	},
+		// 	data: {
+		// 		servicedObjects: {
+		// 			[isExists ? 'disconnect' : 'connect']: {
+		// 				id: objectId,
+		// 			},
+		// 		},
+		// 	},
+		// })
 
 		return { message: 'Все прошло успешно' }
 	}

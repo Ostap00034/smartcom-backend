@@ -19,7 +19,6 @@ export class AuthController {
 
 	@UsePipes(new ValidationPipe())
 	@HttpCode(200)
-	@Roles(Role.MASTER, Role.ADMIN)
 	@Post('login')
 	async login(@Body() dto: LoginDto) {
 		return this.authService.login(dto)

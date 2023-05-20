@@ -2,14 +2,12 @@ import {
 	Controller,
 	Get,
 	HttpCode,
-	Post,
 	Put,
 	Body,
 	UsePipes,
 	ValidationPipe,
 	Patch,
 	Param,
-	SetMetadata,
 } from '@nestjs/common'
 import { UserService } from './user.service'
 import { Auth } from 'src/auth/decorators/auth.decorator'
@@ -26,8 +24,7 @@ export class UserController {
 	@Auth()
 	@Roles(Role.MASTER)
 	async getProfile(@CurrentUser('id') id: number) {
-		// return this.userService.getById(id)
-		return { message: 'BEER' }
+		return this.userService.getById(id)
 	}
 
 	@UsePipes(new ValidationPipe())
@@ -43,8 +40,9 @@ export class UserController {
 	@Patch('profile/archive/:objectId')
 	async toggleArchive(
 		@CurrentUser('id') id: number,
-		@Param('objectId') objectId: string
+		@Param('objectId') objectId: string,
+		@Body() description: string
 	) {
-		return this.userService.toggleArchive(id, +objectId)
+		return this.userService.toggleArchive(description, id, +objectId)
 	}
 }

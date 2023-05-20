@@ -18,8 +18,8 @@ model User {
   role     String
   phone    String @unique
 
-  archive Archive[]
-  object  Object[]
+  object          Object[]
+  servicedObjects ServicedObject[]
 
   @@unique(fields: [email, phone], name: "contacts")
 }
@@ -42,30 +42,19 @@ model Object {
   user   User? @relation(fields: [userId], references: [id])
   userId Int?  @map("user_id")
 
-  ArchiveItem ArchiveItem[]
+  ServicedObject ServicedObject[]
 }
 
-model Archive {
+model ServicedObject {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  items ArchiveItem[]
-
-  user   User @relation(fields: [userId], references: [id])
-  userId Int  @map("user_id")
-}
-
-model ArchiveItem {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  archive   Archive @relation(fields: [archiveId], references: [id])
-  archiveId Int     @map("archive_id")
+  description String
 
   object   Object @relation(fields: [objectId], references: [id])
   objectId Int    @map("object_id")
 
-  @@map("archive_item")
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @map("user_id")
 }
