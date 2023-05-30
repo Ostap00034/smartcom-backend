@@ -68,26 +68,29 @@ export class UserService {
 		})
 	}
 
-	async toggleArchive(description: string, userId: number, objectId: number) {
+	async toggleArchive(userId: number, objectId: number, description: string) {
 		const user = await this.getById(userId)
 
 		const object = await this.objectService.getById(objectId)
-
-		return this.servicedObjectService.create({
-			description,
-			userId,
-			objectId,
-		})
 
 		if (!user) {
 			throw new NotFoundException('Пользователь не найден')
 		}
 
-		console.log(user)
+		const isExists = await this.prisma.servicedObject.findUnique({
+			where: {
+				description: description,
+			},
+		})
 
-		const isExists = user.servicedObjects.some(
-			ServiceOjbect => ServiceOjbect.id === objectId
-		)
+		if (isExists)
+			throw new BadRequestException('Вы уже обслуживали этот объект')
+
+		const servicedObject = await this.servicedObjectService.create({
+			description,
+			userId,
+			objectId,
+		})
 
 		await this.prisma.user.update({
 			where: {
@@ -95,8 +98,9 @@ export class UserService {
 			},
 			data: {
 				servicedObjects: {
-					[isExists ? 'disconnect' : 'connect']: {
-						id: objectId,
+					connect: {
+						id: servicedObject.id,
+						description: description,
 					},
 				},
 			},

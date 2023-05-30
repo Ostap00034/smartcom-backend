@@ -1,8 +1,14 @@
-import { Injectable, Inject, forwardRef } from '@nestjs/common'
+import {
+	Injectable,
+	Inject,
+	forwardRef,
+	NotFoundException,
+} from '@nestjs/common'
 import { PrismaService } from 'src/prisma.service'
 import { CreateServicedObjectDto } from './dto/create-serviced-object.dto'
 import { UserService } from 'src/user/user.service'
 import { ObjectService } from 'src/object/object.service'
+import { servicedObjectReturnObject } from './return-serviced-object.object'
 
 @Injectable()
 export class ServicedObjectService {
@@ -12,13 +18,27 @@ export class ServicedObjectService {
 		private objectService: ObjectService
 	) {}
 
+	async getById(id: number) {
+		const servicedObject = await this.prisma.servicedObject.findUnique({
+			where: {
+				id,
+			},
+			select: servicedObjectReturnObject,
+		})
+
+		if (!servicedObject)
+			throw new NotFoundException('Обслуженный объект не найден')
+
+		return servicedObject
+	}
+
 	async getAll() {
 		return this.prisma.servicedObject.findMany({})
 	}
 
 	async create(dto: CreateServicedObjectDto) {
 		const { description, userId, objectId } = dto
-		
+
 		const user = await this.userService.getById(userId)
 
 		const object = await this.objectService.getById(objectId)

@@ -27,11 +27,18 @@ export class ObjectController {
 	}
 
 	@UsePipes(new ValidationPipe())
+	@Get(':id')
+	@Auth()
+	async getById(@Param('id') id: string) {
+		return this.objectService.getById(+id)
+	}
+
+	@UsePipes(new ValidationPipe())
 	@HttpCode(200)
 	@Auth()
 	@Post()
-	async createObject() {
-		return this.objectService.create()
+	async create(@Body() dto: ObjectDto) {
+		return this.objectService.create(dto)
 	}
 
 	@UsePipes(new ValidationPipe())

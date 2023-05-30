@@ -3,7 +3,9 @@ import {
 	Controller,
 	Get,
 	HttpCode,
+	Param,
 	Post,
+	Put,
 	UsePipes,
 	ValidationPipe,
 } from '@nestjs/common'
@@ -20,11 +22,21 @@ export class ServicedObjectController {
 		return this.servicedObjectService.getAll()
 	}
 
+	@Get(':id')
+	async getById(@Param('id') id: string) {
+		return this.servicedObjectService.getById(+id)
+	}
+
 	@UsePipes(new ValidationPipe())
 	@HttpCode(200)
 	@Auth()
 	@Post()
 	async create(@Body() dto: CreateServicedObjectDto) {
 		return this.servicedObjectService.create(dto)
+	}
+
+	@Put(':id')
+	async update(@Body() dto: CreateServicedObjectDto) {
+		// return this.servicedObjectService.update()
 	}
 }

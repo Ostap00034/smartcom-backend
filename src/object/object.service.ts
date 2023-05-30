@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException,
+} from '@nestjs/common'
 import { PrismaService } from 'src/prisma.service'
 import { objectReturnObject } from './return-object.object'
 import { ObjectDto } from './dto/object.dto'
@@ -60,15 +64,30 @@ export class ObjectService {
 		return object
 	}
 
-	async create() {
-		const object = await this.prisma.object.create({
-			data: {
-				title: '',
-				geolocation: ['', ''],
+	async create(dto: ObjectDto) {
+		const { title, geolocation } = dto
+
+		const objectByTitle = await this.prisma.object.findUnique({
+			where: {
+				title,
 			},
 		})
 
-		return object.id
+		const objectByGeolocation = await this.prisma.object.findUnique({
+			where: {
+				geolocation,
+			},
+		})
+
+		if (objectByGeolocation || objectByTitle)
+			throw new BadRequestException('Объект с таким адресом существует.')
+
+		return await this.prisma.object.create({
+			data: {
+				title,
+				geolocation,
+			},
+		})
 	}
 
 	async update(id: number, dto: ObjectDto) {

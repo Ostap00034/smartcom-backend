@@ -15,6 +15,7 @@ import { CurrentUser } from 'src/auth/decorators/user.decorator'
 import { UserDto } from './user.dto'
 import { Role } from 'src/auth/role.enum'
 import { Roles } from 'src/auth/decorators/roles.decorator'
+import { ToggleArchiveDto } from './dto/toggle-archive.dto'
 
 @Controller('users')
 export class UserController {
@@ -41,8 +42,9 @@ export class UserController {
 	async toggleArchive(
 		@CurrentUser('id') id: number,
 		@Param('objectId') objectId: string,
-		@Body() description: string
+		@Body() dto: ToggleArchiveDto
 	) {
-		return this.userService.toggleArchive(description, id, +objectId)
+		const { description } = dto
+		return this.userService.toggleArchive(id, +objectId, description)
 	}
 }

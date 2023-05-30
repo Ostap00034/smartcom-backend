@@ -48,7 +48,7 @@ model ServicedObject {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  description String
+  description String @unique
 
   object   Object @relation(fields: [objectId], references: [id])
   objectId Int    @map("object_id")
