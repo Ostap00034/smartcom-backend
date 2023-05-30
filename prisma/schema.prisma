@@ -28,6 +28,11 @@ enum EnumObjectStatus {
   REPAIR
 }
 
+enum EnumServicedObjectStatus {
+  IN_REPAIR
+  FINISHED
+}
+
 model Object {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
@@ -52,6 +57,8 @@ model ServicedObject {
 
   object   Object @relation(fields: [objectId], references: [id])
   objectId Int    @map("object_id")
+
+  status EnumServicedObjectStatus @default(IN_REPAIR)
 
   user   User @relation(fields: [userId], references: [id])
   userId Int  @map("user_id")

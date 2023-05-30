@@ -12,6 +12,7 @@ import {
 import { ServicedObjectService } from './serviced-object.service'
 import { CreateServicedObjectDto } from './dto/create-serviced-object.dto'
 import { Auth } from 'src/auth/decorators/auth.decorator'
+import { UpdateServicedObjectDto } from './dto/update-serviced-object.dto'
 
 @Controller('servicedobjects')
 export class ServicedObjectController {
@@ -36,7 +37,7 @@ export class ServicedObjectController {
 	}
 
 	@Put(':id')
-	async update(@Body() dto: CreateServicedObjectDto) {
-		// return this.servicedObjectService.update()
+	async update(@Param('id') id: string, @Body() dto: UpdateServicedObjectDto) {
+		return this.servicedObjectService.update(+id, dto)
 	}
 }
