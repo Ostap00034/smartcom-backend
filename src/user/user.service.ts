@@ -2,6 +2,8 @@ import {
 	Injectable,
 	BadRequestException,
 	NotFoundException,
+	Inject,
+	forwardRef,
 } from '@nestjs/common'
 import { PrismaService } from 'src/prisma.service'
 import { returnUserObject } from './return-user.object'
@@ -15,6 +17,7 @@ import { ObjectService } from 'src/object/object.service'
 export class UserService {
 	constructor(
 		private prisma: PrismaService,
+		@Inject(forwardRef(() => ServicedObjectService))
 		private servicedObjectService: ServicedObjectService,
 		private objectService: ObjectService
 	) {}
@@ -70,34 +73,34 @@ export class UserService {
 
 		const object = await this.objectService.getById(objectId)
 
-		// return this.servicedObjectService.create({
-		// 	description,
-		// 	userId,
-		// 	objectId,
-		// })
+		return this.servicedObjectService.create({
+			description,
+			userId,
+			objectId,
+		})
 
-		// if (!user) {
-		// 	throw new NotFoundException('Пользователь не найден')
-		// }
+		if (!user) {
+			throw new NotFoundException('Пользователь не найден')
+		}
 
-		// console.log(user)
+		console.log(user)
 
-		// const isExists = user.servicedObjects.some(
-		// 	ServiceOjbect => ServiceOjbect.id === objectId
-		// )
+		const isExists = user.servicedObjects.some(
+			ServiceOjbect => ServiceOjbect.id === objectId
+		)
 
-		// await this.prisma.user.update({
-		// 	where: {
-		// 		id: user.id,
-		// 	},
-		// 	data: {
-		// 		servicedObjects: {
-		// 			[isExists ? 'disconnect' : 'connect']: {
-		// 				id: objectId,
-		// 			},
-		// 		},
-		// 	},
-		// })
+		await this.prisma.user.update({
+			where: {
+				id: user.id,
+			},
+			data: {
+				servicedObjects: {
+					[isExists ? 'disconnect' : 'connect']: {
+						id: objectId,
+					},
+				},
+			},
+		})
 
 		return { message: 'Все прошло успешно' }
 	}

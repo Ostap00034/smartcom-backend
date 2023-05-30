@@ -45,16 +45,25 @@ export class AuthService {
 	}
 
 	async register(dto: AuthDto) {
-		const oldUser = await this.prisma.user.findUnique({
+		const oldUserByEmail = await this.prisma.user.findUnique({
 			where: {
-				contacts: {
-					email: dto.email,
-					phone: dto.phone,
-				},
+				email: dto.email,
 			},
 		})
 
-		if (oldUser) throw new BadRequestException('Пользователь уже существует.')
+		if (oldUserByEmail)
+			throw new BadRequestException('Пользователь с такой почтой существует.')
+
+		const oldUserByPhone = await this.prisma.user.findUnique({
+			where: {
+				phone: dto.phone,
+			},
+		})
+
+		if (oldUserByPhone)
+			throw new BadRequestException(
+				'Пользователь с таким номером телефона существует.'
+			)
 
 		const user = await this.prisma.user.create({
 			data: {
@@ -96,12 +105,10 @@ export class AuthService {
 	}
 
 	private async validateUser(dto: LoginDto) {
+		// TODO Сделать отдельную в зависимости от введенного поля
+		// То есть зайти можно по телефону или почте
 		const user = await this.prisma.user.findUnique({
 			where: {
-				// contacts: {
-				// 	email: dto.email,
-				// 	phone: dto.phone,
-				// },
 				email: dto.email,
 			},
 		})

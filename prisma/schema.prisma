@@ -20,8 +20,6 @@ model User {
 
   object          Object[]
   servicedObjects ServicedObject[]
-
-  @@unique(fields: [email, phone], name: "contacts")
 }
 
 enum EnumObjectStatus {
