@@ -15,6 +15,7 @@ import { ObjectService } from './object.service'
 import { GetAllObjectDto } from './dto/get-all.object.dto'
 import { Auth } from 'src/auth/decorators/auth.decorator'
 import { ObjectDto } from './dto/object.dto'
+import { CurrentUser } from 'src/auth/decorators/user.decorator'
 
 @Controller('objects')
 export class ObjectController {
@@ -47,6 +48,12 @@ export class ObjectController {
 	@Auth()
 	async updateObject(@Param('id') id: string, @Body() dto: ObjectDto) {
 		return this.objectService.update(+id, dto)
+	}
+
+	@Put('/connect/:id')
+	@Auth()
+	async connectUser(@CurrentUser('id') id: number, @Param('id') objectId) {
+		return this.objectService.connectUser(id, objectId)
 	}
 
 	@HttpCode(200)

@@ -105,6 +105,17 @@ export class ObjectService {
 		})
 	}
 
+	async connectUser(id: number, objectId: number) {
+		return this.prisma.object.update({
+			where: {
+				id: objectId,
+			},
+			data: {
+				userId: id,
+			},
+		})
+	}
+
 	async delete(id: number) {
 		return this.prisma.object.delete({ where: { id } })
 	}

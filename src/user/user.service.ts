@@ -31,6 +31,7 @@ export class UserService {
 					select: {
 						id: true,
 						description: true,
+						status: true,
 					},
 				},
 				...selectObject,
@@ -77,14 +78,15 @@ export class UserService {
 			throw new NotFoundException('Пользователь не найден')
 		}
 
-		const isExists = await this.prisma.servicedObject.findUnique({
-			where: {
-				description: description,
-			},
-		})
+		// Подумать над защитой от спама
+		// const isExists = await this.prisma.servicedObject.findUnique({
+		// 	where: {
+		// 		description: description,
+		// 	},
+		// })
 
-		if (isExists)
-			throw new BadRequestException('Вы уже обслуживали этот объект')
+		// if (isExists)
+		// 	throw new BadRequestException('Вы уже обслуживали этот объект')
 
 		const servicedObject = await this.servicedObjectService.create({
 			description,
@@ -92,6 +94,9 @@ export class UserService {
 			objectId,
 		})
 
+		console.log(servicedObject)
+
+		// Подключение объекта к пользователю
 		await this.prisma.user.update({
 			where: {
 				id: user.id,
@@ -100,11 +105,17 @@ export class UserService {
 				servicedObjects: {
 					connect: {
 						id: servicedObject.id,
-						description: description,
+					},
+				},
+				object: {
+					connect: {
+						id: objectId,
 					},
 				},
 			},
 		})
+
+		await this.objectService.connectUser(userId, objectId)
 
 		return { message: 'Все прошло успешно' }
 	}

@@ -36,6 +36,7 @@ export class UserController {
 		return this.userService.updateProfile(id, dto)
 	}
 
+	@UsePipes(new ValidationPipe())
 	@HttpCode(200)
 	@Auth()
 	@Patch('profile/archive/:objectId')

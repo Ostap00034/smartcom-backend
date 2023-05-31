@@ -105,8 +105,6 @@ export class AuthService {
 	}
 
 	private async validateUser(dto: LoginDto) {
-		// TODO Сделать отдельную в зависимости от введенного поля
-		// То есть зайти можно по телефону или почте
 		const user = await this.prisma.user.findUnique({
 			where: {
 				email: dto.email,
