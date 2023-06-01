@@ -10,13 +10,20 @@ import { UserService } from 'src/user/user.service'
 import { ObjectService } from 'src/object/object.service'
 import { servicedObjectReturnObject } from './return-serviced-object.object'
 import { UpdateServicedObjectDto } from './dto/update-serviced-object.dto'
+import {
+	EnumObjectSort,
+	GetAllServicedObjectDto,
+} from './dto/get-all-serviced-object.dto'
+import { PaginationService } from 'src/pagination/pagination.service'
+import { Prisma } from '@prisma/client'
 
 @Injectable()
 export class ServicedObjectService {
 	constructor(
 		@Inject(forwardRef(() => UserService)) private userService: UserService,
 		private prisma: PrismaService,
-		private objectService: ObjectService
+		private objectService: ObjectService,
+		private paginationService: PaginationService
 	) {}
 
 	async getById(id: number) {
@@ -27,14 +34,43 @@ export class ServicedObjectService {
 			select: servicedObjectReturnObject,
 		})
 
-		if (!servicedObject)
-			throw new NotFoundException('Обслуженный объект не найден')
+		if (!servicedObject) throw new NotFoundException('РћР±СЉРµРєС‚ РЅРµ РЅР°Р№РґРµРЅ')
 
 		return servicedObject
 	}
 
-	async getAll() {
-		return this.prisma.servicedObject.findMany({})
+	async getAll(dto: GetAllServicedObjectDto) {
+		const { sort, searchTerm } = dto
+
+		const prismaSort: Prisma.ServicedObjectOrderByWithRelationInput[] = []
+
+		if (sort === EnumObjectSort.OLDEST) prismaSort.push({ createdAt: 'asc' })
+		else prismaSort.push({ createdAt: 'desc' })
+
+		const prismaSearchTermFilter: Prisma.ServicedObjectWhereInput = searchTerm
+			? {
+					description: {
+						contains: searchTerm,
+						mode: 'insensitive',
+					},
+			  }
+			: {}
+
+		const { perPage, skip } = this.paginationService.getPagination(dto)
+
+		const servicedObjects = await this.prisma.servicedObject.findMany({
+			where: prismaSearchTermFilter,
+			orderBy: prismaSort,
+			skip,
+			take: perPage,
+		})
+
+		return {
+			servicedObjects,
+			length: await this.prisma.servicedObject.count({
+				where: prismaSearchTermFilter,
+			}),
+		}
 	}
 
 	async create(dto: CreateServicedObjectDto) {

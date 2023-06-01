@@ -23,6 +23,7 @@ export class ObjectController {
 
 	@UsePipes(new ValidationPipe())
 	@Get()
+	@Auth()
 	async getAll(@Query() queryDto: GetAllObjectDto) {
 		return this.objectService.getAll(queryDto)
 	}
