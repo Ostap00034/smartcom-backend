@@ -12,10 +12,11 @@ import {
 import { UserService } from './user.service'
 import { Auth } from 'src/auth/decorators/auth.decorator'
 import { CurrentUser } from 'src/auth/decorators/user.decorator'
-import { UserDto } from './user.dto'
 import { Role } from 'src/auth/role.enum'
 import { Roles } from 'src/auth/decorators/roles.decorator'
 import { ToggleArchiveDto } from './dto/toggle-archive.dto'
+import { UpdateUserDto } from './dto/update-user.dto'
+import { TakeObjectDto } from './dto/take-object.dto'
 
 @Controller('users')
 export class UserController {
@@ -31,9 +32,21 @@ export class UserController {
 	@UsePipes(new ValidationPipe())
 	@HttpCode(200)
 	@Auth()
+	@Put()
+	async takeObject(@CurrentUser('id') id: number, @Body() dto: TakeObjectDto) {
+		return this.userService.takeObject(id, dto)
+	}
+
+	@UsePipes(new ValidationPipe())
+	@HttpCode(200)
+	@Auth()
 	@Put('profile')
-	async updateProfile(@CurrentUser('id') id: number, @Body() dto: UserDto) {
-		return this.userService.updateProfile(id, dto)
+	async updateProfile(
+		@CurrentUser('id') id: number,
+		@CurrentUser('email') email: string,
+		@Body() dto: UpdateUserDto
+	) {
+		return this.userService.updateProfile(id, email, dto)
 	}
 
 	@UsePipes(new ValidationPipe())

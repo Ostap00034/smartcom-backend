@@ -8,10 +8,13 @@ import {
 import { PrismaService } from 'src/prisma.service'
 import { returnUserObject } from './return-user.object'
 import { Prisma } from '@prisma/client'
-import { UserDto } from './user.dto'
+import { UserDto } from './dto/user.dto'
 import { hash } from 'argon2'
 import { ServicedObjectService } from 'src/serviced-object/serviced-object.service'
 import { ObjectService } from 'src/object/object.service'
+import { UpdateUserDto } from './dto/update-user.dto'
+import { TakeObjectDto } from './dto/take-object.dto'
+import { servicedObjectReturnObject } from 'src/serviced-object/return-serviced-object.object'
 
 @Injectable()
 export class UserService {
@@ -28,11 +31,7 @@ export class UserService {
 			select: {
 				...returnUserObject,
 				servicedObjects: {
-					select: {
-						id: true,
-						description: true,
-						status: true,
-					},
+					select: servicedObjectReturnObject,
 				},
 				...selectObject,
 			},
@@ -45,9 +44,41 @@ export class UserService {
 		return user
 	}
 
-	async updateProfile(id: number, dto: UserDto) {
+	async takeObject(id: number, dto: TakeObjectDto) {
+		const { objectId } = dto
+
+		const object = await this.objectService.getById(+objectId)
+
+		console.log(object)
+
+		if (object.userId === id)
+			throw new BadRequestException('Вы уже обслуживаете этот объект.')
+
+		if (object.userId)
+			throw new BadRequestException('Объект обслуживает другой мастер.')
+
+		await this.objectService.connectUser(id, +objectId)
+
+		await this.prisma.user.update({
+			where: {
+				id,
+			},
+			data: {
+				object: {
+					connect: {
+						id: +objectId,
+					},
+				},
+				objectId: +objectId,
+			},
+		})
+
+		return { message: 'Удачной работы' }
+	}
+
+	async updateProfile(id: number, email: string, dto: UpdateUserDto) {
 		const isSameUser = await this.prisma.user.findUnique({
-			where: { email: dto.email },
+			where: { email: email },
 		})
 
 		if (isSameUser && id !== isSameUser.id) {
@@ -70,13 +101,12 @@ export class UserService {
 	}
 
 	async toggleArchive(userId: number, objectId: number, description: string) {
-		const user = await this.getById(userId)
-
 		const object = await this.objectService.getById(objectId)
 
-		if (!user) {
-			throw new NotFoundException('Пользователь не найден')
-		}
+		const user = this.getById(userId)
+
+		if (objectId !== (await user).objectId)
+			throw new BadRequestException('Вы не обслуживали этот объект.')
 
 		// Подумать над защитой от спама
 		// const isExists = await this.prisma.servicedObject.findUnique({
@@ -99,7 +129,7 @@ export class UserService {
 		// Подключение объекта к пользователю
 		await this.prisma.user.update({
 			where: {
-				id: user.id,
+				id: userId,
 			},
 			data: {
 				servicedObjects: {
@@ -108,7 +138,7 @@ export class UserService {
 					},
 				},
 				object: {
-					connect: {
+					disconnect: {
 						id: objectId,
 					},
 				},
@@ -117,6 +147,6 @@ export class UserService {
 
 		await this.objectService.connectUser(userId, objectId)
 
-		return { message: 'Все прошло успешно' }
+		return { message: 'Спасибо за обслуживание.' }
 	}
 }

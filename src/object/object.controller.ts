@@ -16,6 +16,7 @@ import { GetAllObjectDto } from './dto/get-all.object.dto'
 import { Auth } from 'src/auth/decorators/auth.decorator'
 import { ObjectDto } from './dto/object.dto'
 import { CurrentUser } from 'src/auth/decorators/user.decorator'
+import { UpdateObjectDto } from './dto/update-object.dto'
 
 @Controller('objects')
 export class ObjectController {
@@ -23,7 +24,7 @@ export class ObjectController {
 
 	@UsePipes(new ValidationPipe())
 	@Get()
-	@Auth()
+	// @Auth()
 	async getAll(@Query() queryDto: GetAllObjectDto) {
 		return this.objectService.getAll(queryDto)
 	}
@@ -47,7 +48,7 @@ export class ObjectController {
 	@HttpCode(200)
 	@Put(':id')
 	@Auth()
-	async updateObject(@Param('id') id: string, @Body() dto: ObjectDto) {
+	async updateObject(@Param('id') id: string, @Body() dto: UpdateObjectDto) {
 		return this.objectService.update(+id, dto)
 	}
 

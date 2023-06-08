@@ -9,6 +9,7 @@ import { ObjectDto } from './dto/object.dto'
 import { EnumObjectSort, GetAllObjectDto } from './dto/get-all.object.dto'
 import { PaginationService } from 'src/pagination/pagination.service'
 import { Prisma } from '@prisma/client'
+import { UpdateObjectDto } from './dto/update-object.dto'
 
 @Injectable()
 export class ObjectService {
@@ -65,7 +66,7 @@ export class ObjectService {
 	}
 
 	async create(dto: ObjectDto) {
-		const { title, geolocation } = dto
+		const { title, status, description, geolocation } = dto
 
 		const objectByTitle = await this.prisma.object.findUnique({
 			where: {
@@ -85,23 +86,21 @@ export class ObjectService {
 		return await this.prisma.object.create({
 			data: {
 				title,
+				status,
+				description,
 				geolocation,
 			},
 		})
 	}
 
-	async update(id: number, dto: ObjectDto) {
-		const { title, status, geolocation } = dto
+	async update(id: number, dto: UpdateObjectDto) {
+		const object = await this.getById(id)
 
 		return this.prisma.object.update({
 			where: {
 				id,
 			},
-			data: {
-				title,
-				status,
-				geolocation,
-			},
+			data: dto,
 		})
 	}
 

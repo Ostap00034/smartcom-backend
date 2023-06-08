@@ -4,5 +4,4 @@ export const servicedObjectReturnObject = {
 	description: true,
 	object: true,
 	user: true,
-	status: true,
 }

@@ -6,4 +6,6 @@ export const objectReturnObject: Prisma.ObjectSelect = {
 	status: true,
 	geolocation: true,
 	createdAt: true,
+	userId: true,
+	user: true,
 }

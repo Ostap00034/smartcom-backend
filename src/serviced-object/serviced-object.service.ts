@@ -98,7 +98,6 @@ export class ServicedObjectService {
 			},
 			data: {
 				description,
-				status,
 			},
 		})
 	}
