@@ -116,6 +116,7 @@ export class ObjectService {
 	}
 
 	async delete(id: number) {
+		const object = await this.getById(id)
 		return this.prisma.object.delete({ where: { id } })
 	}
 }
