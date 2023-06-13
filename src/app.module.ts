@@ -11,6 +11,8 @@ import { APP_GUARD } from '@nestjs/core'
 import { RolesGuard } from './auth/roles.guard'
 import { JwtModule } from '@nestjs/jwt'
 import { ServicedObjectModule } from './serviced-object/serviced-object.module'
+import { GatewayModule } from './gateway/gateway.module'
+import { ObjectsGateway } from './gateway/objects.gateway'
 
 @Module({
 	controllers: [AppController],
@@ -21,6 +23,7 @@ import { ServicedObjectModule } from './serviced-object/serviced-object.module'
 			provide: APP_GUARD,
 			useClass: RolesGuard,
 		},
+		ObjectsGateway,
 	],
 	imports: [
 		ConfigModule.forRoot(),
@@ -33,6 +36,7 @@ import { ServicedObjectModule } from './serviced-object/serviced-object.module'
 			signOptions: { expiresIn: '5m' },
 		}),
 		ServicedObjectModule,
+		GatewayModule,
 	],
 })
 export class AppModule {}
