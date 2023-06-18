@@ -6,9 +6,10 @@ import { UserService } from 'src/user/user.service'
 import { ObjectService } from 'src/object/object.service'
 import { PaginationService } from 'src/pagination/pagination.service'
 import { UserModule } from 'src/user/user.module'
+import { GatewayModule } from 'src/gateway/gateway.module'
 
 @Module({
-	imports: [forwardRef(() => UserModule)],
+	imports: [forwardRef(() => UserModule), GatewayModule],
 	controllers: [ServicedObjectController],
 	providers: [
 		ServicedObjectService,

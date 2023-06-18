@@ -24,9 +24,15 @@ export class ObjectController {
 
 	@UsePipes(new ValidationPipe())
 	@Get()
-	// @Auth()
+	@Auth()
 	async getAll(@Query() queryDto: GetAllObjectDto) {
 		return this.objectService.getAll(queryDto)
+	}
+
+	@Get('/servicedobjects')
+	@Auth()
+	async getAllServicedObjects() {
+		return this.objectService.getAllServicedObjects()
 	}
 
 	@UsePipes(new ValidationPipe())

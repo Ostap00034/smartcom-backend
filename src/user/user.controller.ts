@@ -17,6 +17,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator'
 import { ToggleArchiveDto } from './dto/toggle-archive.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { TakeObjectDto } from './dto/take-object.dto'
+import { ToggleTaskDto } from './dto/toggle-task.dto'
 
 @Controller('users')
 export class UserController {
@@ -60,5 +61,13 @@ export class UserController {
 	) {
 		const { description } = dto
 		return this.userService.toggleArchive(id, +objectId, description)
+	}
+
+	@UsePipes(new ValidationPipe())
+	@HttpCode(200)
+	@Auth()
+	@Patch('/toggletask')
+	async toggleTask(@Body() dto: ToggleTaskDto) {
+		return this.userService.toggleTask(dto)
 	}
 }

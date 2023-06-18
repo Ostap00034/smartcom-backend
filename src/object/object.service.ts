@@ -10,12 +10,14 @@ import { EnumObjectSort, GetAllObjectDto } from './dto/get-all.object.dto'
 import { PaginationService } from 'src/pagination/pagination.service'
 import { Prisma } from '@prisma/client'
 import { UpdateObjectDto } from './dto/update-object.dto'
+import { ObjectsGateway } from 'src/gateway/objects.gateway'
 
 @Injectable()
 export class ObjectService {
 	constructor(
 		private prisma: PrismaService,
-		private paginationService: PaginationService
+		private paginationService: PaginationService,
+		private objectGateway: ObjectsGateway
 	) {}
 
 	async getAll(dto: GetAllObjectDto = {}) {
@@ -52,6 +54,16 @@ export class ObjectService {
 		}
 	}
 
+	async getAllServicedObjects() {
+		const objects = await this.prisma.object.findMany({
+			where: {
+				status: 'EMERGENCY',
+			},
+		})
+
+		return objects
+	}
+
 	async getById(id: number) {
 		const object = await this.prisma.object.findUnique({
 			where: {
@@ -83,7 +95,7 @@ export class ObjectService {
 		if (objectByGeolocation || objectByTitle)
 			throw new BadRequestException('Объект с таким адресом существует.')
 
-		return await this.prisma.object.create({
+		const newObject = await this.prisma.object.create({
 			data: {
 				title,
 				status,
@@ -91,6 +103,10 @@ export class ObjectService {
 				geolocation,
 			},
 		})
+
+		await this.objectGateway.sendNewObject(newObject)
+
+		return newObject
 	}
 
 	async update(id: number, dto: UpdateObjectDto) {
@@ -117,6 +133,7 @@ export class ObjectService {
 
 	async delete(id: number) {
 		const object = await this.getById(id)
+		console.log(object)
 		return this.prisma.object.delete({ where: { id } })
 	}
 }

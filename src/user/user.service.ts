@@ -15,6 +15,8 @@ import { ObjectService } from 'src/object/object.service'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { TakeObjectDto } from './dto/take-object.dto'
 import { servicedObjectReturnObject } from 'src/serviced-object/return-serviced-object.object'
+import { ToggleTaskDto } from './dto/toggle-task.dto'
+import { UpdateObjectDto } from 'src/object/dto/update-object.dto'
 
 @Injectable()
 export class UserService {
@@ -148,5 +150,42 @@ export class UserService {
 		await this.objectService.connectUser(userId, objectId)
 
 		return { message: 'Спасибо за обслуживание.' }
+	}
+
+	async toggleTask(dto: ToggleTaskDto) {
+		const { userId, objectId, description } = dto
+
+		const object = await this.objectService.getById(objectId)
+
+		const user = await this.getById(userId)
+
+		console.log(user)
+
+		if (objectId === user.objectId)
+			throw new BadRequestException('Этот мастер уже обслуживает этот объект.')
+
+		// Подключение объекта к пользователю
+		await this.prisma.user.update({
+			where: {
+				id: userId,
+			},
+			data: {
+				object: {
+					connect: {
+						id: objectId,
+					},
+				},
+				objectId: objectId,
+			},
+		})
+
+		const updateDto = new UpdateObjectDto()
+		updateDto.description = description
+
+		await this.objectService.update(objectId, updateDto)
+
+		await this.objectService.connectUser(userId, objectId)
+
+		return { message: 'Работа назначена.' }
 	}
 }
