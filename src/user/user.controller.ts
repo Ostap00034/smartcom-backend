@@ -33,9 +33,12 @@ export class UserController {
 	@UsePipes(new ValidationPipe())
 	@HttpCode(200)
 	@Auth()
-	@Put()
-	async takeObject(@CurrentUser('id') id: number, @Body() dto: TakeObjectDto) {
-		return this.userService.takeObject(id, dto)
+	@Patch('/takeObject/:id')
+	async takeObject(
+		@CurrentUser('id') userId: number,
+		@Param('id') objectId: string
+	) {
+		return this.userService.takeObject(userId, +objectId)
 	}
 
 	@UsePipes(new ValidationPipe())

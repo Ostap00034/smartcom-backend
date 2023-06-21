@@ -44,6 +44,7 @@ export class ObjectService {
 			orderBy: prismaSort,
 			skip,
 			take: perPage,
+			select: objectReturnObject,
 		})
 
 		return {

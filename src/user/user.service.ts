@@ -46,24 +46,22 @@ export class UserService {
 		return user
 	}
 
-	async takeObject(id: number, dto: TakeObjectDto) {
-		const { objectId } = dto
-
+	async takeObject(userId: number, objectId: number) {
 		const object = await this.objectService.getById(+objectId)
 
 		console.log(object)
 
-		if (object.userId === id)
+		if (object.userId === userId)
 			throw new BadRequestException('Вы уже обслуживаете этот объект.')
 
 		if (object.userId)
 			throw new BadRequestException('Объект обслуживает другой мастер.')
 
-		await this.objectService.connectUser(id, +objectId)
+		await this.objectService.connectUser(userId, +objectId)
 
 		await this.prisma.user.update({
 			where: {
-				id,
+				id: userId,
 			},
 			data: {
 				object: {
