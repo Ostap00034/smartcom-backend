@@ -19,7 +19,7 @@ model User {
   phone    String @unique
 
   object          Object[]
-  objectId        Int?
+  objectId        Int[]
   servicedObjects ServicedObject[]
 }
 

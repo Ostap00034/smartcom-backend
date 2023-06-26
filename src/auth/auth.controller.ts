@@ -10,8 +10,6 @@ import { AuthService } from './auth.service'
 import { AuthDto } from './dto/auth.dto'
 import { RefreshTokenDto } from './dto/refresh-token.dto'
 import { LoginDto } from './dto/login.dto'
-import { Roles } from './decorators/roles.decorator'
-import { Role } from './role.enum'
 
 @Controller('auth')
 export class AuthController {

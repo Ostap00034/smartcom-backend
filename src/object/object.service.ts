@@ -113,15 +113,30 @@ export class ObjectService {
 	async update(id: number, dto: UpdateObjectDto) {
 		const object = await this.getById(id)
 
-		return this.prisma.object.update({
+		const updatedObject = await this.prisma.object.update({
 			where: {
 				id,
 			},
 			data: dto,
 		})
+
+		this.objectGateway.updateObject(dto)
+
+		return updatedObject
 	}
 
 	async connectUser(id: number, objectId: number) {
+		return this.prisma.object.update({
+			where: {
+				id: objectId,
+			},
+			data: {
+				userId: id,
+			},
+		})
+	}
+
+	async disconnectUser(id: number, objectId: number) {
 		return this.prisma.object.update({
 			where: {
 				id: objectId,

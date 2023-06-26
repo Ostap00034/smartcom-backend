@@ -1,21 +1,25 @@
-import { EnumObjectStatus, Prisma } from '@prisma/client'
-import { ArrayMinSize, IsOptional, IsString } from 'class-validator'
+import { EnumObjectStatus, Prisma, User } from '@prisma/client'
+import { ArrayMinSize, IsNumber, IsOptional, IsString } from 'class-validator'
 
 export class UpdateObjectDto implements Prisma.ObjectUpdateInput {
 	@IsString()
 	@IsOptional()
-	title: string
+	title?: string
 
-	@IsString()
+	// @IsString()
 	@IsOptional()
 	status: EnumObjectStatus
 
 	@IsString()
 	@IsOptional()
-	description: string
+	description?: string
+
+	@IsNumber()
+	@IsOptional()
+	userId?: number
 
 	@IsString({ each: true })
 	@ArrayMinSize(2)
 	@IsOptional()
-	geolocation: string[]
+	geolocation?: string[]
 }

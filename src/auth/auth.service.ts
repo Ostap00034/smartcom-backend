@@ -18,7 +18,7 @@ export class AuthService {
 
 	async login(dto: LoginDto) {
 		const user = await this.validateUser(dto)
-		const tokens = await this.issueTokens(user.id, user.role)
+		const tokens = await this.issueTokens(user.id)
 
 		return {
 			user: this.returnUserFields(user),
@@ -36,7 +36,7 @@ export class AuthService {
 			},
 		})
 
-		const tokens = await this.issueTokens(user.id, user.role)
+		const tokens = await this.issueTokens(user.id)
 
 		return {
 			user: this.returnUserFields(user),
@@ -75,7 +75,7 @@ export class AuthService {
 			},
 		})
 
-		const tokens = await this.issueTokens(user.id, user.role)
+		const tokens = await this.issueTokens(user.id)
 
 		return {
 			user: this.returnUserFields(user),
@@ -83,8 +83,8 @@ export class AuthService {
 		}
 	}
 
-	private async issueTokens(userId: number, role: string) {
-		const data = { id: userId, role: role }
+	private async issueTokens(userId: number) {
+		const data = { id: userId }
 
 		const accessToken = this.jwt.sign(data, {
 			expiresIn: '1h',

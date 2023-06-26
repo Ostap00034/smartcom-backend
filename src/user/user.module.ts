@@ -11,13 +11,7 @@ import { ObjectsGateway } from 'src/gateway/objects.gateway'
 @Module({
 	imports: [forwardRef(() => ServicedObjectModule), GatewayModule],
 	controllers: [UserController],
-	providers: [
-		UserService,
-		PrismaService,
-		ObjectService,
-		PaginationService,
-		ObjectsGateway,
-	],
+	providers: [UserService, PrismaService, ObjectService, PaginationService],
 	exports: [UserService],
 })
 export class UserModule {}

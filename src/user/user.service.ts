@@ -1,3 +1,4 @@
+import { ObjectsGateway } from './../gateway/objects.gateway'
 import {
 	Injectable,
 	BadRequestException,
@@ -7,16 +8,16 @@ import {
 } from '@nestjs/common'
 import { PrismaService } from 'src/prisma.service'
 import { returnUserObject } from './return-user.object'
-import { Prisma } from '@prisma/client'
+import { EnumObjectStatus, Prisma } from '@prisma/client'
 import { UserDto } from './dto/user.dto'
 import { hash } from 'argon2'
 import { ServicedObjectService } from 'src/serviced-object/serviced-object.service'
 import { ObjectService } from 'src/object/object.service'
 import { UpdateUserDto } from './dto/update-user.dto'
-import { TakeObjectDto } from './dto/take-object.dto'
 import { servicedObjectReturnObject } from 'src/serviced-object/return-serviced-object.object'
 import { ToggleTaskDto } from './dto/toggle-task.dto'
 import { UpdateObjectDto } from 'src/object/dto/update-object.dto'
+import { ToggleArchiveDto } from './dto/toggle-archive.dto'
 
 @Injectable()
 export class UserService {
@@ -24,7 +25,8 @@ export class UserService {
 		private prisma: PrismaService,
 		@Inject(forwardRef(() => ServicedObjectService))
 		private servicedObjectService: ServicedObjectService,
-		private objectService: ObjectService
+		private objectService: ObjectService,
+		private objectsGateway: ObjectsGateway
 	) {}
 
 	async getById(id: number, selectObject: Prisma.UserSelect = {}) {
@@ -100,12 +102,14 @@ export class UserService {
 		})
 	}
 
-	async toggleArchive(userId: number, objectId: number, description: string) {
+	async toggleArchive(userId: number, objectId: number, dto: ToggleArchiveDto) {
 		const object = await this.objectService.getById(objectId)
 
-		const user = this.getById(userId)
+		const { description } = dto
 
-		if (objectId !== (await user).objectId)
+		const user = await this.getById(userId)
+
+		if (user.objectId.indexOf(objectId))
 			throw new BadRequestException('Вы не обслуживали этот объект.')
 
 		// Подумать над защитой от спама
@@ -123,6 +127,14 @@ export class UserService {
 			userId,
 			objectId,
 		})
+
+		const newDto: UpdateObjectDto = {
+			status: EnumObjectStatus.NORMAL,
+			userId: null,
+			description: '',
+		}
+
+		await this.objectService.update(objectId, newDto)
 
 		console.log(servicedObject)
 
@@ -145,7 +157,7 @@ export class UserService {
 			},
 		})
 
-		await this.objectService.connectUser(userId, objectId)
+		// await this.objectService.connectUser(userId, objectId)
 
 		return { message: 'Спасибо за обслуживание.' }
 	}
@@ -159,7 +171,7 @@ export class UserService {
 
 		console.log(user)
 
-		if (objectId === user.objectId)
+		if (user.objectId.indexOf(objectId))
 			throw new BadRequestException('Этот мастер уже обслуживает этот объект.')
 
 		// Подключение объекта к пользователю
@@ -173,7 +185,7 @@ export class UserService {
 						id: objectId,
 					},
 				},
-				objectId: objectId,
+				objectId: { push: objectId },
 			},
 		})
 

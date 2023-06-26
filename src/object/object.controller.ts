@@ -64,6 +64,12 @@ export class ObjectController {
 		return this.objectService.connectUser(id, objectId)
 	}
 
+	@Put('/disconnect/:id')
+	@Auth()
+	async disconnectUser(@CurrentUser('id') id: number, @Param('id') objectId) {
+		return this.objectService.disconnectUser(id, objectId)
+	}
+
 	@HttpCode(200)
 	@Delete(':id')
 	@Auth()

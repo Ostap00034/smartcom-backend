@@ -8,6 +8,7 @@ import {
 } from '@nestjs/websockets'
 import { Server } from 'socket.io'
 import { ObjectDto } from 'src/object/dto/object.dto'
+import { UpdateObjectDto } from 'src/object/dto/update-object.dto'
 
 @WebSocketGateway(4201, {
 	cors: {
@@ -25,10 +26,15 @@ export class ObjectsGateway {
 	// 	})
 	// }
 
-	@SubscribeMessage('newObject')
+	@SubscribeMessage('object')
 	sendNewObject(dto: ObjectDto) {
 		console.log(dto)
-		this.server.sockets.emit('newObject', dto)
+		this.server.sockets.emit('object', dto)
+	}
+
+	updateObject(dto: UpdateObjectDto) {
+		console.log(dto)
+		this.server.sockets.emit('object', dto)
 	}
 
 	// @SubscribeMessage('objects')

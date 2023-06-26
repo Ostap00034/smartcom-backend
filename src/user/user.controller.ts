@@ -12,11 +12,8 @@ import {
 import { UserService } from './user.service'
 import { Auth } from 'src/auth/decorators/auth.decorator'
 import { CurrentUser } from 'src/auth/decorators/user.decorator'
-import { Role } from 'src/auth/role.enum'
-import { Roles } from 'src/auth/decorators/roles.decorator'
 import { ToggleArchiveDto } from './dto/toggle-archive.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
-import { TakeObjectDto } from './dto/take-object.dto'
 import { ToggleTaskDto } from './dto/toggle-task.dto'
 
 @Controller('users')
@@ -25,7 +22,6 @@ export class UserController {
 
 	@Get('profile')
 	@Auth()
-	@Roles(Role.MASTER)
 	async getProfile(@CurrentUser('id') id: number) {
 		return this.userService.getById(id)
 	}
@@ -62,8 +58,7 @@ export class UserController {
 		@Param('objectId') objectId: string,
 		@Body() dto: ToggleArchiveDto
 	) {
-		const { description } = dto
-		return this.userService.toggleArchive(id, +objectId, description)
+		return this.userService.toggleArchive(id, +objectId, dto)
 	}
 
 	@UsePipes(new ValidationPipe())
