@@ -18,7 +18,13 @@ import { ToggleTaskDto } from './dto/toggle-task.dto'
 
 @Controller('users')
 export class UserController {
-	constructor(private readonly userService: UserService) {}
+	constructor(private readonly userService: UserService) { }
+	
+	@Get()
+	@Auth()
+	async getAllMasters() {
+		return this.userService.getAllMasters()
+		}
 
 	@Get('profile')
 	@Auth()

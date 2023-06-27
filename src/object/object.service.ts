@@ -105,7 +105,7 @@ export class ObjectService {
 			},
 		})
 
-		await this.objectGateway.sendNewObject(newObject)
+		this.objectGateway.sendCreateObject(newObject)
 
 		return newObject
 	}
@@ -120,13 +120,15 @@ export class ObjectService {
 			data: dto,
 		})
 
-		this.objectGateway.updateObject(dto)
+		console.log('ИУУКЭ', updatedObject)
+
+		this.objectGateway.sendUpdatedObject(updatedObject)
 
 		return updatedObject
 	}
 
 	async connectUser(id: number, objectId: number) {
-		return this.prisma.object.update({
+		const updatedObject = await this.prisma.object.update({
 			where: {
 				id: objectId,
 			},
@@ -134,6 +136,10 @@ export class ObjectService {
 				userId: id,
 			},
 		})
+
+		this.objectGateway.sendUpdatedObject(updatedObject)
+
+		return updatedObject
 	}
 
 	async disconnectUser(id: number, objectId: number) {

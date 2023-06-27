@@ -1,3 +1,4 @@
+import { UpdateObjectDto } from './../object/dto/update-object.dto'
 import { OnModuleInit } from '@nestjs/common'
 import {
 	MessageBody,
@@ -6,35 +7,42 @@ import {
 	WebSocketGateway,
 	WebSocketServer,
 } from '@nestjs/websockets'
-import { Server } from 'socket.io'
+import { Server, Socket } from 'socket.io'
 import { ObjectDto } from 'src/object/dto/object.dto'
-import { UpdateObjectDto } from 'src/object/dto/update-object.dto'
 
 @WebSocketGateway(4201, {
 	cors: {
 		origin: ['http://localhost:5173'],
 	},
 })
-export class ObjectsGateway {
+export class ObjectsGateway implements OnGatewayDisconnect {
 	@WebSocketServer()
 	server: Server
 
-	// onModuleInit() {
-	// 	this.server.on('connect', socket => {
+	onModuleInit() {
+		this.server.on('connect', socket => {
+			console.log(socket.id)
+			console.log('Подключились')
+		})
+	}
+
+	// OnGatewayDisconnect() {
+	// 	this.server.off('connect', socket => {
 	// 		console.log(socket.id)
-	// 		console.log('Подключились')
+	// 		console.log('Отключились')
 	// 	})
 	// }
 
-	@SubscribeMessage('object')
-	sendNewObject(dto: ObjectDto) {
+	@SubscribeMessage('create')
+	sendCreateObject(dto: ObjectDto) {
 		console.log(dto)
-		this.server.sockets.emit('object', dto)
+		this.server.sockets.emit('create', dto)
 	}
 
-	updateObject(dto: UpdateObjectDto) {
+	@SubscribeMessage('update')
+	sendUpdatedObject(dto: UpdateObjectDto) {
 		console.log(dto)
-		this.server.sockets.emit('object', dto)
+		this.server.sockets.emit('update', dto)
 	}
 
 	// @SubscribeMessage('objects')
@@ -45,7 +53,7 @@ export class ObjectsGateway {
 	// 	})
 	// }
 
-	// handleDisconnect(client: Socket) {
-	// 	console.log('Disclfjksldi')
-	// }
+	handleDisconnect(client: Socket) {
+		console.log('Отключилис')
+	}
 }

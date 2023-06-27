@@ -29,6 +29,14 @@ export class UserService {
 		private objectsGateway: ObjectsGateway
 	) {}
 
+	async getAllMasters() {
+		return await this.prisma.user.findMany({
+			where: {
+				role: 'MASTER',
+			},
+		})
+	}
+
 	async getById(id: number, selectObject: Prisma.UserSelect = {}) {
 		const user = await this.prisma.user.findUnique({
 			where: { id },
