@@ -1,11 +1,11 @@
-import { IsNumber, IsString } from 'class-validator'
+import { IsString } from 'class-validator'
 
 export class ToggleTaskDto {
-	@IsNumber()
-	userId: number
+	@IsString()
+	userId: string
 
-	@IsNumber()
-	objectId: number
+	@IsString()
+	objectId: string
 
 	@IsString()
 	description: string

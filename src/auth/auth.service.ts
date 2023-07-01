@@ -11,10 +11,15 @@ import { User } from '@prisma/client'
 import { JwtService } from '@nestjs/jwt'
 import { RefreshTokenDto } from './dto/refresh-token.dto'
 import { LoginDto } from './dto/login.dto'
+import { UserService } from 'src/user/user.service'
 
 @Injectable()
 export class AuthService {
-	constructor(private prisma: PrismaService, private jwt: JwtService) {}
+	constructor(
+		private prisma: PrismaService,
+		private jwt: JwtService,
+		private userService: UserService
+	) {}
 
 	async login(dto: LoginDto) {
 		const user = await this.validateUser(dto)
@@ -30,10 +35,8 @@ export class AuthService {
 		const result = await this.jwt.verifyAsync(dto.refreshToken)
 		if (!result) throw new UnauthorizedException('Неверный refresh token')
 
-		const user = await this.prisma.user.findUnique({
-			where: {
-				id: result.id,
-			},
+		const user = await this.userService.getById(result.id, {
+			role: true,
 		})
 
 		const tokens = await this.issueTokens(user.id)
@@ -72,6 +75,7 @@ export class AuthService {
 				fio: dto.fio,
 				phone: dto.phone,
 				role: dto.role,
+				objectId: null,
 			},
 		})
 
@@ -97,7 +101,7 @@ export class AuthService {
 		return { accessToken, refreshToken }
 	}
 
-	private returnUserFields(user: User) {
+	private returnUserFields(user: Partial<User>) {
 		return {
 			id: user.id,
 			email: user.email,

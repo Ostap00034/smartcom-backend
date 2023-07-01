@@ -66,14 +66,17 @@ export class ObjectController {
 
 	@Put('/disconnect/:id')
 	@Auth()
-	async disconnectUser(@CurrentUser('id') id: number, @Param('id') objectId) {
-		return this.objectService.disconnectUser(id, objectId)
+	async disconnectUser(
+		@CurrentUser('id') userId: number,
+		@Param('id') objectId
+	) {
+		return this.objectService.disconnectUser(userId, objectId)
 	}
 
 	@HttpCode(200)
-	@Delete(':id')
+	@Delete(':objectId')
 	@Auth()
-	async deleteObject(@Param('id') id: string) {
-		return this.objectService.delete(+id)
+	async deleteObject(@Param('objectId') objectId: string) {
+		return this.objectService.delete(+objectId)
 	}
 }

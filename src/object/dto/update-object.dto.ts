@@ -1,5 +1,11 @@
 import { EnumObjectStatus, Prisma, User } from '@prisma/client'
-import { ArrayMinSize, IsNumber, IsOptional, IsString } from 'class-validator'
+import {
+	ArrayMinSize,
+	IsBoolean,
+	IsNumber,
+	IsOptional,
+	IsString,
+} from 'class-validator'
 
 export class UpdateObjectDto implements Prisma.ObjectUpdateInput {
 	@IsString()
@@ -22,4 +28,7 @@ export class UpdateObjectDto implements Prisma.ObjectUpdateInput {
 	@ArrayMinSize(2)
 	@IsOptional()
 	geolocation?: string[]
+
+	@IsBoolean()
+	inRepair?: boolean | Prisma.NullableBoolFieldUpdateOperationsInput
 }

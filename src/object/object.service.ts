@@ -120,8 +120,6 @@ export class ObjectService {
 			data: dto,
 		})
 
-		console.log('ИУУКЭ', updatedObject)
-
 		this.objectGateway.sendUpdatedObject(updatedObject)
 
 		return updatedObject
@@ -134,6 +132,7 @@ export class ObjectService {
 			},
 			data: {
 				userId: id,
+				status: 'REPAIR',
 			},
 		})
 
@@ -142,20 +141,20 @@ export class ObjectService {
 		return updatedObject
 	}
 
-	async disconnectUser(id: number, objectId: number) {
+	async disconnectUser(userId: number, objectId: number) {
 		return this.prisma.object.update({
 			where: {
 				id: objectId,
 			},
 			data: {
-				userId: id,
+				userId: userId,
 			},
 		})
 	}
 
 	async delete(id: number) {
 		const object = await this.getById(id)
-		console.log(object)
+
 		return this.prisma.object.delete({ where: { id } })
 	}
 }

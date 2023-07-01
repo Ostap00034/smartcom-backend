@@ -19,7 +19,7 @@ model User {
   phone    String @unique
 
   object          Object[]
-  objectId        Int[]
+  objectId        Int?
   servicedObjects ServicedObject[]
 }
 
@@ -43,6 +43,8 @@ model Object {
   status      EnumObjectStatus @default(NORMAL)
   geolocation String[]         @unique
   description String           @default("")
+
+  inRepair Boolean? @default(false)
 
   user   User? @relation(fields: [userId], references: [id])
   userId Int?  @map("user_id")

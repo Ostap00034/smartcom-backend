@@ -6,7 +6,6 @@ import { ObjectService } from 'src/object/object.service'
 import { PaginationService } from 'src/pagination/pagination.service'
 import { ServicedObjectModule } from 'src/serviced-object/serviced-object.module'
 import { GatewayModule } from 'src/gateway/gateway.module'
-import { ObjectsGateway } from 'src/gateway/objects.gateway'
 
 @Module({
 	imports: [forwardRef(() => ServicedObjectModule), GatewayModule],

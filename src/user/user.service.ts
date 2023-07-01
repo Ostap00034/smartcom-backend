@@ -1,4 +1,3 @@
-import { ObjectsGateway } from './../gateway/objects.gateway'
 import {
 	Injectable,
 	BadRequestException,
@@ -9,7 +8,6 @@ import {
 import { PrismaService } from 'src/prisma.service'
 import { returnUserObject } from './return-user.object'
 import { EnumObjectStatus, Prisma } from '@prisma/client'
-import { UserDto } from './dto/user.dto'
 import { hash } from 'argon2'
 import { ServicedObjectService } from 'src/serviced-object/serviced-object.service'
 import { ObjectService } from 'src/object/object.service'
@@ -25,8 +23,7 @@ export class UserService {
 		private prisma: PrismaService,
 		@Inject(forwardRef(() => ServicedObjectService))
 		private servicedObjectService: ServicedObjectService,
-		private objectService: ObjectService,
-		private objectsGateway: ObjectsGateway
+		private objectService: ObjectService
 	) {}
 
 	async getAllMasters() {
@@ -59,8 +56,6 @@ export class UserService {
 	async takeObject(userId: number, objectId: number) {
 		const object = await this.objectService.getById(+objectId)
 
-		console.log(object)
-
 		if (object.userId === userId)
 			throw new BadRequestException('Вы уже обслуживаете этот объект.')
 
@@ -79,11 +74,33 @@ export class UserService {
 						id: +objectId,
 					},
 				},
-				objectId: +objectId,
 			},
 		})
 
 		return { message: 'Удачной работы' }
+	}
+
+	async startToDo(userId: number, objectId: number) {
+		const object = await this.objectService.getById(objectId)
+
+		if (userId !== object.userId)
+			throw new BadRequestException('Вы не обслуживаете этот объект.')
+
+		const newDto: UpdateObjectDto = {
+			inRepair: true,
+			status: 'REPAIR',
+		}
+
+		await this.objectService.update(objectId, newDto)
+
+		return await this.prisma.user.update({
+			where: {
+				id: userId,
+			},
+			data: {
+				objectId: objectId,
+			},
+		})
 	}
 
 	async updateProfile(id: number, email: string, dto: UpdateUserDto) {
@@ -117,18 +134,8 @@ export class UserService {
 
 		const user = await this.getById(userId)
 
-		if (user.objectId.indexOf(objectId))
+		if (user.objectId === objectId)
 			throw new BadRequestException('Вы не обслуживали этот объект.')
-
-		// Подумать над защитой от спама
-		// const isExists = await this.prisma.servicedObject.findUnique({
-		// 	where: {
-		// 		description: description,
-		// 	},
-		// })
-
-		// if (isExists)
-		// 	throw new BadRequestException('Вы уже обслуживали этот объект')
 
 		const servicedObject = await this.servicedObjectService.create({
 			description,
@@ -144,12 +151,9 @@ export class UserService {
 
 		await this.objectService.update(objectId, newDto)
 
-		console.log(servicedObject)
-
-		// Подключение объекта к пользователю
 		await this.prisma.user.update({
 			where: {
-				id: userId,
+				id: +userId,
 			},
 			data: {
 				servicedObjects: {
@@ -162,10 +166,9 @@ export class UserService {
 						id: objectId,
 					},
 				},
+				objectId: null,
 			},
 		})
-
-		// await this.objectService.connectUser(userId, objectId)
 
 		return { message: 'Спасибо за обслуживание.' }
 	}
@@ -173,36 +176,33 @@ export class UserService {
 	async toggleTask(dto: ToggleTaskDto) {
 		const { userId, objectId, description } = dto
 
-		const object = await this.objectService.getById(objectId)
+		const object = await this.objectService.getById(+objectId)
 
-		const user = await this.getById(userId)
+		const user = await this.getById(+userId)
 
-		console.log(user)
-
-		if (user.objectId.indexOf(objectId))
+		if (user.objectId === +objectId)
 			throw new BadRequestException('Этот мастер уже обслуживает этот объект.')
 
-		// Подключение объекта к пользователю
 		await this.prisma.user.update({
 			where: {
-				id: userId,
+				id: +userId,
 			},
 			data: {
 				object: {
 					connect: {
-						id: objectId,
+						id: +objectId,
 					},
 				},
-				objectId: { push: objectId },
+				objectId: +objectId,
 			},
 		})
 
 		const updateDto = new UpdateObjectDto()
 		updateDto.description = description
 
-		await this.objectService.update(objectId, updateDto)
+		await this.objectService.update(+objectId, updateDto)
 
-		await this.objectService.connectUser(userId, objectId)
+		await this.objectService.connectUser(+userId, +objectId)
 
 		return { message: 'Работа назначена.' }
 	}
