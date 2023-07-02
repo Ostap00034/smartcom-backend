@@ -1,3 +1,4 @@
+import { UsersGateway } from '../gateway/users.gateway'
 import {
 	Injectable,
 	BadRequestException,
@@ -23,7 +24,8 @@ export class UserService {
 		private prisma: PrismaService,
 		@Inject(forwardRef(() => ServicedObjectService))
 		private servicedObjectService: ServicedObjectService,
-		private objectService: ObjectService
+		private objectService: ObjectService,
+		private usersGateway: UsersGateway
 	) {}
 
 	async getAllMasters() {
@@ -93,6 +95,8 @@ export class UserService {
 
 		await this.objectService.update(objectId, newDto)
 
+		this.usersGateway.udpateProfile()
+
 		return await this.prisma.user.update({
 			where: {
 				id: userId,
@@ -114,6 +118,8 @@ export class UserService {
 
 		const user = await this.getById(id)
 
+		this.usersGateway.udpateProfile()
+
 		return this.prisma.user.update({
 			where: {
 				id,
@@ -134,7 +140,9 @@ export class UserService {
 
 		const user = await this.getById(userId)
 
-		if (user.objectId === objectId)
+		console.log(user.objectId, objectId)
+
+		if (user.objectId !== objectId)
 			throw new BadRequestException('Вы не обслуживали этот объект.')
 
 		const servicedObject = await this.servicedObjectService.create({
@@ -147,6 +155,7 @@ export class UserService {
 			status: EnumObjectStatus.NORMAL,
 			userId: null,
 			description: '',
+			inRepair: false,
 		}
 
 		await this.objectService.update(objectId, newDto)
@@ -170,6 +179,8 @@ export class UserService {
 			},
 		})
 
+		this.usersGateway.udpateProfile()
+
 		return { message: 'Спасибо за обслуживание.' }
 	}
 
@@ -178,30 +189,39 @@ export class UserService {
 
 		const object = await this.objectService.getById(+objectId)
 
-		const user = await this.getById(+userId)
+		if (userId) {
+			const user = await this.getById(+userId)
 
-		if (user.objectId === +objectId)
-			throw new BadRequestException('Этот мастер уже обслуживает этот объект.')
+			if (user.objectId === +objectId)
+				throw new BadRequestException(
+					'Этот мастер уже обслуживает этот объект.'
+				)
 
-		await this.prisma.user.update({
-			where: {
-				id: +userId,
-			},
-			data: {
-				object: {
-					connect: {
-						id: +objectId,
+			await this.prisma.user.update({
+				where: {
+					id: +userId,
+				},
+				data: {
+					object: {
+						connect: {
+							id: +objectId,
+						},
 					},
 				},
-			},
-		})
+			})
+		}
 
 		const updateDto = new UpdateObjectDto()
-		updateDto.description = description
+		if (description) updateDto.description = description
+		updateDto.status = 'EMERGENCY'
 
 		await this.objectService.update(+objectId, updateDto)
 
-		await this.objectService.connectUser(+userId, +objectId)
+		if (userId) {
+			await this.objectService.connectUser(+userId, +objectId)
+
+			this.usersGateway.udpateProfile()
+		}
 
 		return { message: 'Работа назначена.' }
 	}

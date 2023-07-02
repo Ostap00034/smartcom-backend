@@ -41,7 +41,6 @@ export class ObjectsGateway implements OnGatewayDisconnect {
 
 	@SubscribeMessage('update')
 	sendUpdatedObject(dto: UpdateObjectDto) {
-		console.log(dto)
 		this.server.sockets.emit('update', dto)
 	}
 
