@@ -193,7 +193,6 @@ export class UserService {
 						id: +objectId,
 					},
 				},
-				objectId: +objectId,
 			},
 		})
 

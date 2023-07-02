@@ -29,6 +29,7 @@ export class UpdateObjectDto implements Prisma.ObjectUpdateInput {
 	@IsOptional()
 	geolocation?: string[]
 
+	@IsOptional()
 	@IsBoolean()
 	inRepair?: boolean | Prisma.NullableBoolFieldUpdateOperationsInput
 }
