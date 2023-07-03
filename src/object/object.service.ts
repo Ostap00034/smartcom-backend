@@ -118,6 +118,9 @@ export class ObjectService {
 				id,
 			},
 			data: dto,
+			include: {
+				user: { select: { fio: true } },
+			},
 		})
 
 		this.objectGateway.sendUpdatedObject(updatedObject)
