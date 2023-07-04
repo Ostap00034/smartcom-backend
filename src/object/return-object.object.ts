@@ -9,4 +9,5 @@ export const objectReturnObject: Prisma.ObjectSelect = {
 	createdAt: true,
 	userId: true,
 	user: true,
+	inRepair: true,
 }
