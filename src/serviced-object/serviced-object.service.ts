@@ -63,6 +63,12 @@ export class ServicedObjectService {
 			orderBy: prismaSort,
 			skip,
 			take: perPage,
+			select: {
+				user: true,
+				object: true,
+				updatedAt: true,
+				description: true,
+			},
 		})
 
 		return {

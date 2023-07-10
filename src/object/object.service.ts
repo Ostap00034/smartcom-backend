@@ -30,10 +30,28 @@ export class ObjectService {
 
 		const prismaSearchTermFilter: Prisma.ObjectWhereInput = searchTerm
 			? {
-					title: {
-						contains: searchTerm,
-						mode: 'insensitive',
-					},
+					OR: [
+						{
+							title: {
+								contains: searchTerm,
+								mode: 'insensitive',
+							},
+						},
+						{
+							user: {
+								fio: {
+									contains: searchTerm,
+									mode: 'insensitive',
+								},
+							},
+						},
+						{
+							description: {
+								contains: searchTerm,
+								mode: 'insensitive',
+							},
+						},
+					],
 			  }
 			: {}
 
