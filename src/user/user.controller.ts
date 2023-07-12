@@ -32,6 +32,12 @@ export class UserController {
 		return this.userService.getById(id)
 	}
 
+	@Get('/:id')
+	@Auth()
+	async getById(@Param('id') id: string) {
+		return this.userService.getById(+id)
+	}
+
 	@UsePipes(new ValidationPipe())
 	@HttpCode(200)
 	@Auth()
