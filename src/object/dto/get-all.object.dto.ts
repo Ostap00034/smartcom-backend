@@ -1,5 +1,5 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator'
-import { PaginationDto } from 'src/pagination/pagination.dto'
+import { PaginationDto } from '../../pagination/pagination.dto'
 
 export enum EnumObjectSort {
 	NEWEST = 'newest',
