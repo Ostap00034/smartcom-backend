@@ -1,5 +1,4 @@
 import { UpdateObjectDto } from './../object/dto/update-object.dto'
-import { OnModuleInit } from '@nestjs/common'
 import {
 	MessageBody,
 	OnGatewayDisconnect,
@@ -13,6 +12,8 @@ import { ObjectDto } from 'src/object/dto/object.dto'
 @WebSocketGateway(4201, {
 	cors: {
 		origin: ['https://smartcomygk.online'],
+		credentials: true,
+		transports: ['websocket', 'polling'],
 	},
 })
 export class ObjectsGateway implements OnGatewayDisconnect {
@@ -26,13 +27,6 @@ export class ObjectsGateway implements OnGatewayDisconnect {
 		})
 	}
 
-	// OnGatewayDisconnect() {
-	// 	this.server.off('connect', socket => {
-	// 		console.log(socket.id)
-	// 		console.log('Отключились')
-	// 	})
-	// }
-
 	@SubscribeMessage('create')
 	sendCreateObject(dto: ObjectDto) {
 		console.log(dto)
@@ -43,14 +37,6 @@ export class ObjectsGateway implements OnGatewayDisconnect {
 	sendUpdatedObject(dto: UpdateObjectDto) {
 		this.server.sockets.emit('update', dto)
 	}
-
-	// @SubscribeMessage('objects')
-	// handleMessage(@MessageBody() dto: ObjectDto) {
-	// 	console.log(dto)
-	// 	this.server.sockets.emit('newObject', {
-	// 		content: dto,
-	// 	})
-	// }
 
 	handleDisconnect(client: Socket) {
 		console.log('Отключилис')

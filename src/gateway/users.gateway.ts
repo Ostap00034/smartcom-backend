@@ -10,6 +10,8 @@ import { Server, Socket } from 'socket.io'
 @WebSocketGateway(4201, {
 	cors: {
 		origin: ['https://smartcomygk.online'],
+		credentials: true,
+		transports: ['websocket', 'polling'],
 	},
 })
 export class UsersGateway implements OnGatewayDisconnect {
