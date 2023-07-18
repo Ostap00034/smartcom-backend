@@ -9,7 +9,7 @@ import { Server, Socket } from 'socket.io'
 
 @WebSocketGateway(4201, {
 	cors: {
-		origin: ['http://localhost:5173'],
+		origin: ['https://smartcomygk.online'],
 	},
 })
 export class UsersGateway implements OnGatewayDisconnect {

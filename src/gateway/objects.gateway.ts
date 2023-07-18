@@ -12,7 +12,7 @@ import { ObjectDto } from 'src/object/dto/object.dto'
 
 @WebSocketGateway(4201, {
 	cors: {
-		origin: ['http://localhost:5173'],
+		origin: ['https://smartcomygk.online'],
 	},
 })
 export class ObjectsGateway implements OnGatewayDisconnect {
