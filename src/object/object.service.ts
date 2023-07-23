@@ -25,8 +25,8 @@ export class ObjectService {
 
 		const prismaSort: Prisma.ObjectOrderByWithRelationInput[] = []
 
-		if (sort === EnumObjectSort.OLDEST) prismaSort.push({ createdAt: 'asc' })
-		else prismaSort.push({ createdAt: 'desc' })
+		if (sort === EnumObjectSort.OLDEST) prismaSort.push({ updatedAt: 'asc' })
+		else prismaSort.push({ updatedAt: 'desc' })
 
 		const prismaSearchTermFilter: Prisma.ObjectWhereInput = searchTerm
 			? {
