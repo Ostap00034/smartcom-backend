@@ -63,12 +63,9 @@ export class ServicedObjectService {
 			orderBy: prismaSort,
 			skip,
 			take: perPage,
-			select: {
-				id: true,
+			include: {
 				user: true,
 				object: true,
-				updatedAt: true,
-				description: true,
 			},
 		})
 
