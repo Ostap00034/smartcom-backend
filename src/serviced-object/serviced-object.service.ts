@@ -64,6 +64,7 @@ export class ServicedObjectService {
 			skip,
 			take: perPage,
 			select: {
+				id: true,
 				user: true,
 				object: true,
 				updatedAt: true,
