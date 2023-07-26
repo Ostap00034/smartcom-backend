@@ -83,6 +83,17 @@ export class ObjectService {
 		return objects
 	}
 
+	async getAllNeedServicedObjects() {
+		const objects = await this.prisma.object.findMany({
+			where: {
+				status: 'EMERGENCY',
+				userId: null,
+			},
+		})
+
+		return objects
+	}
+
 	async getById(id: number) {
 		const object = await this.prisma.object.findUnique({
 			where: {

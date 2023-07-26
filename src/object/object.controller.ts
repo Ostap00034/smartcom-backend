@@ -35,6 +35,12 @@ export class ObjectController {
 		return this.objectService.getAllServicedObjects()
 	}
 
+	@Get('/needserviceobjects')
+	@Auth()
+	async getAllNeedServicedObjects() {
+		return this.objectService.getAllNeedServicedObjects()
+	}
+
 	@UsePipes(new ValidationPipe())
 	@Get(':id')
 	@Auth()
