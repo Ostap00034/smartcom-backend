@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  email    String @unique
+  password String
+  fio      String
+  role     String
+  phone    String @unique
+
+  object          Object[]
+  objectId        Int?
+  servicedObjects ServicedObject[]
+}
+
+enum EnumObjectStatus {
+  NORMAL
+  EMERGENCY
+  REPAIR
+}
+
+enum EnumServicedObjectStatus {
+  IN_REPAIR
+  FINISHED
+}
+
+model Object {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  title       String           @unique
+  status      EnumObjectStatus @default(NORMAL)
+  geolocation String[]         @unique
+  description String           @default("")
+
+  inRepair Boolean? @default(false)
+
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?  @map("user_id")
+
+  ServicedObject ServicedObject[]
+}
+
+model ServicedObject {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  description String
+
+  object   Object @relation(fields: [objectId], references: [id])
+  objectId Int    @map("object_id")
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @map("user_id")
+}
