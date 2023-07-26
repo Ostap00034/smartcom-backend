@@ -37,8 +37,8 @@ export class ObjectController {
 
 	@Get('/needserviceobjects')
 	@Auth()
-	async getAllNeedServicedObjects() {
-		return this.objectService.getAllNeedServicedObjects()
+	async getAllNeedServiceObjects() {
+		return this.objectService.getAllNeedServiceObjects()
 	}
 
 	@UsePipes(new ValidationPipe())

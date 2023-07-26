@@ -83,7 +83,7 @@ export class ObjectService {
 		return objects
 	}
 
-	async getAllNeedServicedObjects() {
+	async getAllNeedServiceObjects() {
 		const objects = await this.prisma.object.findMany({
 			where: {
 				status: 'EMERGENCY',
