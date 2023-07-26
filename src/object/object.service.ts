@@ -84,7 +84,6 @@ export class ObjectService {
 	}
 
 	async getAllNeedServiceObjects() {
-		return {}
 		return await this.prisma.object.findMany({
 			where: {
 				status: 'EMERGENCY',
@@ -96,7 +95,7 @@ export class ObjectService {
 	async getById(id: number) {
 		const object = await this.prisma.object.findUnique({
 			where: {
-				id,
+				id: id,
 			},
 			select: objectReturnObject,
 		})
