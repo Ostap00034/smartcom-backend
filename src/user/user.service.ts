@@ -38,7 +38,7 @@ export class UserService {
 
 	async getById(id: number, selectObject: Prisma.UserSelect = {}) {
 		const user = await this.prisma.user.findUnique({
-			where: { id },
+			where: { id: id },
 			select: {
 				...returnUserObject,
 				servicedObjects: {
@@ -90,6 +90,7 @@ export class UserService {
 		await this.prisma.user.update({
 			where: { id: userId },
 			data: {
+				objectId: null,
 				object: {
 					disconnect: {
 						id: objectId,
