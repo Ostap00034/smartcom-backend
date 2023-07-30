@@ -2,6 +2,8 @@ import {
 	BadRequestException,
 	Injectable,
 	NotFoundException,
+	Inject,
+	forwardRef,
 } from '@nestjs/common'
 import { PrismaService } from 'src/prisma.service'
 import { objectReturnObject } from './return-object.object'
@@ -17,6 +19,7 @@ import { UserService } from 'src/user/user.service'
 export class ObjectService {
 	constructor(
 		private prisma: PrismaService,
+		@Inject(forwardRef(() => UserService))
 		private userService: UserService,
 		private paginationService: PaginationService,
 		private objectGateway: ObjectsGateway

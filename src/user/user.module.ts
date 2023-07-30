@@ -6,9 +6,14 @@ import { ObjectService } from 'src/object/object.service'
 import { PaginationService } from 'src/pagination/pagination.service'
 import { ServicedObjectModule } from 'src/serviced-object/serviced-object.module'
 import { GatewayModule } from 'src/gateway/gateway.module'
+import { ObjectModule } from 'src/object/object.module'
 
 @Module({
-	imports: [forwardRef(() => ServicedObjectModule), GatewayModule],
+	imports: [
+		forwardRef(() => ServicedObjectModule),
+		GatewayModule,
+		forwardRef(() => ObjectModule),
+	],
 	controllers: [UserController],
 	providers: [UserService, PrismaService, ObjectService, PaginationService],
 	exports: [UserService],
