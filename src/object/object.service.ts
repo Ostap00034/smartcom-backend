@@ -11,11 +11,13 @@ import { PaginationService } from 'src/pagination/pagination.service'
 import { Prisma } from '@prisma/client'
 import { UpdateObjectDto } from './dto/update-object.dto'
 import { ObjectsGateway } from 'src/gateway/objects.gateway'
+import { UserService } from 'src/user/user.service'
 
 @Injectable()
 export class ObjectService {
 	constructor(
 		private prisma: PrismaService,
+		private userService: UserService,
 		private paginationService: PaginationService,
 		private objectGateway: ObjectsGateway
 	) {}
@@ -140,13 +142,14 @@ export class ObjectService {
 	async cancel(id: number) {
 		const object = await this.getById(id)
 
-		this.disconnectUser(object.userId, id)
+		await this.disconnectUser(object.userId, id)
 
 		const updatedObject = await this.prisma.object.update({
 			where: { id },
 			data: {
 				userId: null,
 				status: 'NORMAL',
+				description: null,
 			},
 		})
 
@@ -190,12 +193,14 @@ export class ObjectService {
 	}
 
 	async disconnectUser(userId: number, objectId: number) {
-		return this.prisma.object.update({
+		await this.userService.disconnectObject(userId, objectId)
+		return await this.prisma.object.update({
 			where: {
 				id: objectId,
 			},
 			data: {
-				userId: userId,
+				userId: null,
+				inRepair: null,
 			},
 		})
 	}

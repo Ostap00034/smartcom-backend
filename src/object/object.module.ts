@@ -10,9 +10,9 @@ import { UserService } from 'src/user/user.service'
 import { UserModule } from 'src/user/user.module'
 
 @Module({
-	imports: [ServicedObjectModule, GatewayModule],
+	imports: [ServicedObjectModule, GatewayModule, UserModule],
 	controllers: [ObjectController],
-	providers: [ObjectService, PrismaService, PaginationService],
+	providers: [ObjectService, PrismaService, PaginationService, UserService],
 	exports: [ObjectService],
 })
 export class ObjectModule {}

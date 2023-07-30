@@ -82,6 +82,23 @@ export class UserService {
 		return { message: 'Удачной работы' }
 	}
 
+	async disconnectObject(userId: number, objectId: number) {
+		const object = await this.objectService.getById(objectId)
+
+		const user = await this.getById(userId)
+
+		await this.prisma.user.update({
+			where: { id: userId },
+			data: {
+				object: {
+					disconnect: {
+						id: objectId,
+					},
+				},
+			},
+		})
+	}
+
 	async startToDo(userId: number, objectId: number) {
 		const object = await this.objectService.getById(objectId)
 
