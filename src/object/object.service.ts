@@ -137,6 +137,24 @@ export class ObjectService {
 		return newObject
 	}
 
+	async cancel(id: number) {
+		const object = await this.getById(id)
+
+		this.disconnectUser(object.userId, id)
+
+		const updatedObject = await this.prisma.object.update({
+			where: { id },
+			data: {
+				userId: null,
+				status: 'NORMAL',
+			},
+		})
+
+		this.objectGateway.sendUpdatedObject(updatedObject)
+
+		return updatedObject
+	}
+
 	async update(id: number, dto: UpdateObjectDto) {
 		const object = await this.getById(id)
 

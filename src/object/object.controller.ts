@@ -58,6 +58,14 @@ export class ObjectController {
 
 	@UsePipes(new ValidationPipe())
 	@HttpCode(200)
+	@Put('/cancel/:id')
+	@Auth()
+	async cancelObject(@Param('id') id: string) {
+		return this.objectService.cancel(+id)
+	}
+
+	@UsePipes(new ValidationPipe())
+	@HttpCode(200)
 	@Put(':id')
 	@Auth()
 	async updateObject(@Param('id') id: string, @Body() dto: UpdateObjectDto) {
