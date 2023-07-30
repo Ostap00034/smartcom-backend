@@ -1,5 +1,4 @@
 import {
-	MessageBody,
 	OnGatewayDisconnect,
 	SubscribeMessage,
 	WebSocketGateway,
@@ -27,7 +26,6 @@ export class UsersGateway implements OnGatewayDisconnect {
 
 	@SubscribeMessage('updateProfile')
 	udpateProfile() {
-		console.log('ПИВО')
 		this.server.sockets.emit('updateProfile')
 	}
 

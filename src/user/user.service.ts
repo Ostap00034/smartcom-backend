@@ -140,9 +140,7 @@ export class UserService {
 
 		const user = await this.getById(userId)
 
-		console.log(user.objectId, objectId)
-
-		if (user.objectId !== objectId)
+		if (userId !== object.userId)
 			throw new BadRequestException('Вы не обслуживали этот объект.')
 
 		const servicedObject = await this.servicedObjectService.create({
