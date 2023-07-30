@@ -156,7 +156,12 @@ export class ObjectService {
 			},
 		})
 
-		this.objectGateway.sendUpdatedObject(updatedObject)
+		const newUpdatedObject = {
+			...updatedObject,
+			user: null,
+		}
+
+		this.objectGateway.sendUpdatedObject(newUpdatedObject)
 
 		return updatedObject
 	}
