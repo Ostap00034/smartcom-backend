@@ -152,7 +152,7 @@ export class ObjectService {
 			data: {
 				userId: null,
 				status: 'NORMAL',
-				description: null,
+				description: '',
 			},
 		})
 
