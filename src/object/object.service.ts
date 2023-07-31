@@ -1,3 +1,4 @@
+import { UsersGateway } from './../gateway/users.gateway'
 import {
 	BadRequestException,
 	Injectable,
@@ -22,7 +23,8 @@ export class ObjectService {
 		@Inject(forwardRef(() => UserService))
 		private userService: UserService,
 		private paginationService: PaginationService,
-		private objectGateway: ObjectsGateway
+		private objectGateway: ObjectsGateway,
+		private usersGateway: UsersGateway
 	) {}
 
 	async getAll(dto: GetAllObjectDto = {}) {
@@ -164,6 +166,8 @@ export class ObjectService {
 		}
 
 		this.objectGateway.sendUpdatedObject(newUpdatedObject)
+
+		this.usersGateway.updateProfile()
 
 		return updatedObject
 	}
