@@ -66,6 +66,8 @@ export class UserService {
 
 		await this.objectService.connectUser(userId, +objectId)
 
+		this.usersGateway.udpateProfile()
+
 		await this.prisma.user.update({
 			where: {
 				id: userId,
