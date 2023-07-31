@@ -77,6 +77,19 @@ export class ServicedObjectService {
 		}
 	}
 
+	async getObjectHistory(objectId: number) {
+		const object = await this.objectService.getById(objectId)
+
+		return this.prisma.servicedObject.findMany({
+			where: {
+				id: objectId,
+			},
+			select: {
+				...servicedObjectReturnObject,
+			},
+		})
+	}
+
 	async create(dto: CreateServicedObjectDto) {
 		const { description, userId, objectId } = dto
 

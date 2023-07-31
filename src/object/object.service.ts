@@ -227,7 +227,10 @@ export class ObjectService {
 	async delete(id: number) {
 		const object = await this.getById(id)
 
-		if (object.user) await this.disconnectUser(object.userId, id)
+		if (object.user) {
+			await this.disconnectUser(object.userId, id)
+			this.usersGateway.updateProfile()
+		}
 
 		return await this.prisma.object.update({
 			where: { id },

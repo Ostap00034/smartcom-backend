@@ -30,6 +30,11 @@ export class ServicedObjectController {
 		return this.servicedObjectService.getById(+id)
 	}
 
+	@Get('/history/:id')
+	async getObjectHistory(@Param('id') id: string) {
+		return this.servicedObjectService.getObjectHistory(+id)
+	}
+
 	@UsePipes(new ValidationPipe())
 	@HttpCode(200)
 	@Auth()
