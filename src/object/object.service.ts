@@ -149,7 +149,7 @@ export class ObjectService {
 	async cancel(id: number) {
 		const object = await this.getById(id)
 
-		await this.disconnectUser(object.userId, id)
+		if (object.user) await this.disconnectUser(object.userId, id)
 
 		const updatedObject = await this.prisma.object.update({
 			where: { id },
