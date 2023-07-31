@@ -82,6 +82,7 @@ export class ObjectService {
 		const objects = await this.prisma.object.findMany({
 			where: {
 				status: 'EMERGENCY',
+				isServiced: true,
 			},
 		})
 
@@ -92,6 +93,7 @@ export class ObjectService {
 		return await this.prisma.object.findMany({
 			where: {
 				status: 'EMERGENCY',
+				isServiced: true,
 				userId: null,
 			},
 		})
@@ -216,6 +218,11 @@ export class ObjectService {
 	async delete(id: number) {
 		const object = await this.getById(id)
 
-		return this.prisma.object.delete({ where: { id } })
+		return this.prisma.object.update({
+			where: { id },
+			data: {
+				isServiced: false,
+			},
+		})
 	}
 }
