@@ -25,7 +25,7 @@ export class UsersGateway implements OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('updateProfile')
-	udpateProfile() {
+	updateProfile() {
 		this.server.sockets.emit('updateProfile')
 	}
 
