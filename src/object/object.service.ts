@@ -63,7 +63,7 @@ export class ObjectService {
 		const { perPage, skip } = this.paginationService.getPagination(dto)
 
 		const objects = await this.prisma.object.findMany({
-			where: prismaSearchTermFilter,
+			where: { ...prismaSearchTermFilter, isServiced: true },
 			orderBy: prismaSort,
 			skip,
 			take: perPage,
