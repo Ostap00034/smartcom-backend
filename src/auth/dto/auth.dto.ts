@@ -1,12 +1,23 @@
-import { IsEmail, MinLength, IsString, IsPhoneNumber } from 'class-validator'
+import {
+	IsEmail,
+	MinLength,
+	IsString,
+	IsPhoneNumber,
+	IsEnum,
+} from 'class-validator'
+
+enum Roles {
+	'MASTER',
+	'ADMIN',
+}
 
 export class AuthDto {
 	@IsEmail()
 	email: string
 	@IsString()
 	fio: string
-	@IsString()
-	role: string
+	@IsEnum(Roles)
+	role: Roles
 	@IsPhoneNumber('RU')
 	phone: string
 	@MinLength(6, {

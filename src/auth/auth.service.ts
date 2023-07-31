@@ -74,7 +74,7 @@ export class AuthService {
 				password: await hash(dto.password),
 				fio: dto.fio,
 				phone: dto.phone,
-				role: dto.role,
+				role: dto.role.toString(),
 				objectId: null,
 			},
 		})
