@@ -66,7 +66,7 @@ export class UserService {
 
 		await this.objectService.connectUser(userId, +objectId)
 
-		this.usersGateway.udpateProfile()
+		this.usersGateway.updateProfile()
 
 		await this.prisma.user.update({
 			where: {
@@ -115,7 +115,7 @@ export class UserService {
 
 		await this.objectService.update(objectId, newDto)
 
-		this.usersGateway.udpateProfile()
+		this.usersGateway.updateProfile()
 
 		return await this.prisma.user.update({
 			where: {
@@ -138,7 +138,7 @@ export class UserService {
 
 		const user = await this.getById(id)
 
-		this.usersGateway.udpateProfile()
+		this.usersGateway.updateProfile()
 
 		return this.prisma.user.update({
 			where: {
@@ -199,7 +199,7 @@ export class UserService {
 			},
 		})
 
-		this.usersGateway.udpateProfile()
+		this.usersGateway.updateProfile()
 
 		return { message: 'Спасибо за обслуживание.' }
 	}
@@ -240,7 +240,7 @@ export class UserService {
 		if (userId) {
 			await this.objectService.connectUser(+userId, +objectId)
 
-			this.usersGateway.udpateProfile()
+			this.usersGateway.updateProfile()
 		}
 
 		return { message: 'Работа назначена.' }
