@@ -195,6 +195,11 @@ export class ObjectService {
 				userId: id,
 				status: 'REPAIR',
 			},
+			include: {
+				user: {
+					select: { fio: true },
+				},
+			},
 		})
 
 		this.objectGateway.sendUpdatedObject(updatedObject)
