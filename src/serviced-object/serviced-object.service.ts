@@ -82,7 +82,9 @@ export class ServicedObjectService {
 
 		return this.prisma.servicedObject.findMany({
 			where: {
-				id: objectId,
+				object: {
+					id: objectId,
+				},
 			},
 			select: {
 				...servicedObjectReturnObject,
