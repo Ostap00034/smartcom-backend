@@ -232,7 +232,7 @@ export class ObjectService {
 			this.usersGateway.updateProfile()
 		}
 
-		return await this.prisma.object.update({
+		const oldObject = await this.prisma.object.update({
 			where: { id },
 			data: {
 				isServiced: false,
@@ -241,5 +241,9 @@ export class ObjectService {
 				status: 'NORMAL',
 			},
 		})
+
+		this.objectGateway.sendUpdatedObject(oldObject)
+
+		return oldObject
 	}
 }
