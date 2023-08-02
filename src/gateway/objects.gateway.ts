@@ -11,7 +11,7 @@ import { ObjectDto } from 'src/object/dto/object.dto'
 
 @WebSocketGateway(4201, {
 	cors: {
-		origin: ['https://smartcomygk.online'],
+		origin: ['https://smartcomygk.online', 'https://smartcomygc.online'],
 		credentials: true,
 		transports: ['websocket', 'polling'],
 	},
